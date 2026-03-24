@@ -1,0 +1,40 @@
+.tile {
+    width: 120px;
+    height: 120px;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 10%;
+    box-sizing: border-box;
+    font-weight: 700;
+    line-height: 1;
+    transition:
+        background-color 140ms ease,
+        border-color 140ms ease,
+        transform 90ms ease;
+}
+
+.tileRevealed {
+    background: #e2e8f0;
+    border-color: #94a3b8;
+    color: #0f172a;
+    cursor: default;
+}
+
+.tileMine {
+    background: #ef4444;
+    border-color: #dc2626;
+    color: #ffffff;
+}
+
+.tileFlagged {
+    background: #f59e0b;
+    border-color: #d97706;
+    color: #1f2937;
+}

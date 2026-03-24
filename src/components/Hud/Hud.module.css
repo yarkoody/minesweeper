@@ -1,0 +1,32 @@
+.hud {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 12px;
+    width: min(640px, 100%);
+    margin: 0 auto 12px;
+    padding: 10px 14px;
+    background: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 10px;
+}
+
+.hudMetric {
+    display: inline-flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.hudMetricIcon {
+    margin-right: 8px;
+}
+
+.hudMetric[data-metric-id="flags"] {
+    justify-self: start;
+}
+
+.hudMetric[data-metric-id="time"] {
+    justify-self: end;
+}

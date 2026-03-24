@@ -1,0 +1,40 @@
+.gameShell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    padding: 20px;
+}
+
+.gameHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 640px;
+    padding: 16px;
+    background: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.gameTitle {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #e2e8f0;
+    text-transform: uppercase;
+}
+
+.gameStatus {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #94a3b8;
+    letter-spacing: 0.04em;
+}
