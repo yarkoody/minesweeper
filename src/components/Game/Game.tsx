@@ -6,6 +6,7 @@ import { Hud } from "../Hud/Hud";
 import type { HudMetricType } from "../../types/HudMetricType";
 import { formatTime } from "../../helpers/formatTime";
 import styles from "./Game.module.css";
+import { getAdjacentMines } from "../../helpers/getAdjacentMines";
 
 export function Game() {
     const [board, setBoard] = useState(boardData);
@@ -53,24 +54,23 @@ export function Game() {
             hasFirstMoveBeenMade.current = true;
             handleFirstClickTimer();
         }
-        const isMineClicked = clickedTile.isMine;
 
-        const nextBoard = board.map((rowArr, rowIndex) => {
-            if (rowIndex !== row) return rowArr;
-
-            return rowArr.map((tile, tileIndex) => {
-                if (tileIndex !== col) return tile;
-                return { ...tile, isRevealed: true };
-            });
-        });
-        setBoard(nextBoard);
-
-        if (isMineClicked) {
+        const nextBoard = board.map((rowArr) =>
+            rowArr.map((tile) => ({ ...tile })),
+        );
+        const clicked = nextBoard[row][col];
+        if (clicked.isMine) {
+            clicked.isRevealed = true;
+            setBoard(nextBoard);
             setIsGameOver(true);
             handleStopTimer(timerIdRef.current);
             timerIdRef.current = null;
             return;
         }
+
+        floodReveal(nextBoard, row, col);
+        setBoard(nextBoard);
+
         if (checkWinCondition(nextBoard)) {
             setIsWin(true);
             handleStopTimer(timerIdRef.current);
@@ -95,10 +95,64 @@ export function Game() {
         });
     };
 
+    const floodReveal = (
+        board: TileType[][],
+        startRow: number,
+        startCol: number,
+    ) => {
+        const queue: Array<[number, number]> = [[startRow, startCol]];
+        const visited = new Set<string>();
+        const directions: Array<[number, number]> = [
+            [-1, -1],
+            [-1, 0],
+            [-1, 1],
+            [0, -1],
+            [0, 1],
+            [1, -1],
+            [1, 0],
+            [1, 1],
+        ];
+        while (queue.length > 0) {
+            const current = queue.shift();
+
+            if (!current) continue;
+            const [row, col] = current;
+
+            const outOfBounds =
+                row < 0 ||
+                row >= board.length ||
+                col < 0 ||
+                col >= board[0].length;
+            if (outOfBounds) continue;
+
+            const key = `${row}-${col}`;
+            if (visited.has(key)) continue;
+            visited.add(key);
+
+            const tile = board[row][col];
+
+            if (tile.isFlagged || tile.isMine || tile.isRevealed) continue;
+
+            tile.isRevealed = true;
+
+            const adjacent = getAdjacentMines(board, row, col);
+            tile.adjacentMines = adjacent;
+
+            if (adjacent !== 0) continue;
+
+            for (const [dRow, dCol] of directions) {
+                queue.push([row + dRow, col + dCol]);
+            }
+        }
+    };
+
     return (
         <div className={styles.gameShell}>
             <div className={styles.gameHeader}>
-                <p className={styles.gameTitle}>MineSweeper</p>
+                <h1 className={styles.gameTitle}>MineSweeper</h1>
+                <p className={styles.gameStatus}>
+                    {isWin ? "You win!" : isGameOver ? "Game Over" : ""}
+                </p>
             </div>
             <Hud metrics={hudMetrics} />
             <Board
