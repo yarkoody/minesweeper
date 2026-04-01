@@ -7,8 +7,10 @@ import type { HudMetricType } from "../../types/HudMetricType";
 import { formatTime } from "../../helpers/formatTime";
 import styles from "./Game.module.css";
 import { getAdjacentMines } from "../../helpers/getAdjacentMines";
+import { Clock, Flag } from "lucide-react";
 
 export function Game() {
+    // TODO: Refactor to useReducer for better state management as the game logic grows more complex
     const [board, setBoard] = useState(boardData);
     const [isWin, setIsWin] = useState(false);
     const [isGameOver, setIsGameOver] = useState(false);
@@ -20,6 +22,17 @@ export function Game() {
         (acc, row) => acc + row.filter((tile) => tile.isFlagged).length,
         0,
     );
+
+    const handleResetGame = () => {
+        handleStopTimer(timerIdRef.current);
+        timerIdRef.current = null;
+        setBoard(boardData);
+        setIsWin(false);
+        setIsGameOver(false);
+
+        setElapsedTime(0);
+        hasFirstMoveBeenMade.current = false;
+    };
 
     const handleFirstClickTimer = () => {
         timerIdRef.current = setInterval(() => {
@@ -35,8 +48,8 @@ export function Game() {
     };
 
     const hudMetrics: HudMetricType[] = [
-        { id: "flags", icon: "🚩", value: flagsPlaced },
-        { id: "time", icon: "⏱", value: formatTime(elapsedTime) },
+        { id: "flags", icon: <Flag />, value: flagsPlaced },
+        { id: "time", icon: <Clock />, value: formatTime(elapsedTime) },
     ];
     const checkWinCondition = (board: TileType[][]) => {
         return board.every((rowArray) =>
