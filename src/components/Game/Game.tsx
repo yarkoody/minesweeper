@@ -8,11 +8,13 @@ import { formatTime } from "../../helpers/formatTime";
 import styles from "./Game.module.css";
 import { getAdjacentMines } from "../../helpers/getAdjacentMines";
 import { Clock, Flag } from "lucide-react";
+import { Modal } from "../Modal/Modal";
 
 export function Game() {
     // TODO: Refactor to useReducer for better state management as the game logic grows more complex
     const [board, setBoard] = useState(boardData);
     const [isWin, setIsWin] = useState(false);
+
     const [isGameOver, setIsGameOver] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const hasFirstMoveBeenMade = useRef(false);
@@ -29,7 +31,6 @@ export function Game() {
         setBoard(boardData);
         setIsWin(false);
         setIsGameOver(false);
-
         setElapsedTime(0);
         hasFirstMoveBeenMade.current = false;
     };
@@ -174,6 +175,11 @@ export function Game() {
                 handleToggleFlag={handleToggleFlag}
                 isWin={isWin}
                 isGameOver={isGameOver}
+            />
+            <Modal
+                winOrLose={isWin}
+                isOpen={isWin || isGameOver}
+                onRestart={handleResetGame}
             />
         </div>
     );
