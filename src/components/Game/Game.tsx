@@ -1,5 +1,4 @@
-import { useRef, useState } from "react";
-import { boardData } from "../../data/boardData";
+import { useEffect, useRef, useState } from "react";
 import { Board } from "../Board/Board";
 import type { TileType } from "../../types/TileType";
 import { Hud } from "../Hud/Hud";
@@ -9,10 +8,12 @@ import styles from "./Game.module.css";
 import { getAdjacentMines } from "../../helpers/getAdjacentMines";
 import { Clock, Flag } from "lucide-react";
 import { Modal } from "../Modal/Modal";
+import axios from "axios";
+import { mapMineCordsToBoard } from "../../helpers/mapMineCordsToBoard";
 
 export function Game() {
     // TODO: Refactor to useReducer for better state management as the game logic grows more complex
-    const [board, setBoard] = useState(boardData);
+    const [board, setBoard] = useState([] as TileType[][]);
     const [isWin, setIsWin] = useState(false);
 
     const [isGameOver, setIsGameOver] = useState(false);
@@ -25,14 +26,40 @@ export function Game() {
         0,
     );
 
-    const handleResetGame = () => {
+    const fetchBoardData = async () => {
+        try {
+            const response = await axios.post(
+                "http://localhost:5034/game/start",
+            );
+
+            if (!response?.data) {
+                throw new Error("Failed to fetch board data");
+            }
+            console.log("Fetched board data:", response.data);
+            setBoard(
+                mapMineCordsToBoard({
+                    rows: response.data.rows,
+                    cols: response.data.cols,
+                    minePositions: response.data.minePositions,
+                }),
+            );
+        } catch (error) {
+            console.error("Error fetching board data:", error);
+        }
+    };
+
+    useEffect(() => {
+        void fetchBoardData();
+    }, []);
+
+    const handleResetGame = async () => {
         handleStopTimer(timerIdRef.current);
         timerIdRef.current = null;
-        setBoard(boardData);
         setIsWin(false);
         setIsGameOver(false);
         setElapsedTime(0);
         hasFirstMoveBeenMade.current = false;
+        await fetchBoardData();
     };
 
     const handleFirstClickTimer = () => {
@@ -179,7 +206,9 @@ export function Game() {
             <Modal
                 winOrLose={isWin}
                 isOpen={isWin || isGameOver}
-                onRestart={handleResetGame}
+                onRestart={() => {
+                    void handleResetGame();
+                }}
             />
         </div>
     );
