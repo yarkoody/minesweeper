@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddSingleton(new BoardProvider(9, 9, 3));
+builder.Services.AddSingleton(new BoardProvider(9, 9, 10));
 builder.Services.AddSingleton<LeaderBoardHandler>();
 
 var app = builder.Build();

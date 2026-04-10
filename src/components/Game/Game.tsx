@@ -31,7 +31,10 @@ export function Game() {
     const timerIdRef = useRef<number | null>(null);
 
     const flagsPlaced = board.reduce(
-        (acc, row) => acc + row.filter((tile) => tile.isFlagged).length,
+        (acc, row) =>
+            acc +
+            row.filter((tile) => tile.isMine).length -
+            row.filter((tile) => tile.isFlagged).length,
         0,
     );
 
