@@ -10,6 +10,8 @@ import { Clock, Flag } from "lucide-react";
 import { Modal } from "../Modal/Modal";
 import axios from "axios";
 import { mapMineCordsToBoard } from "../../helpers/mapMineCordsToBoard";
+import type { LeaderBoardEntry } from "../../types/LeaderBoardEntry";
+import { Leaderboard } from "../Leaderboard/Leaderboard";
 
 export function Game() {
     // TODO: Refactor to useReducer for better state management as the game logic grows more complex
@@ -18,6 +20,13 @@ export function Game() {
 
     const [isGameOver, setIsGameOver] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
+
+    const [playerName, setPlayerName] = useState("");
+    const [leaderboard, setLeaderboard] = useState(
+        [] as Array<LeaderBoardEntry>,
+    );
+    const [hasSubmittedScore, setHasSubmittedScore] = useState(false);
+
     const hasFirstMoveBeenMade = useRef(false);
     const timerIdRef = useRef<number | null>(null);
 
@@ -48,6 +57,54 @@ export function Game() {
         }
     };
 
+    const handlePlayerNameChange = (name: string) => {
+        setPlayerName(name);
+    };
+
+    const fetchLeaderBoard = async () => {
+        try {
+            const resp = await axios.get(
+                "http://localhost:5034/game/leaderboard",
+            );
+            console.log("Fetched leaderboard data:", resp.data);
+
+            setLeaderboard(resp.data);
+        } catch (error) {
+            console.error(`failed to fetch leaderboard: ${error}`);
+        }
+    };
+
+    useEffect(() => {
+        fetchLeaderBoard();
+    }, []);
+
+    const registerScore = async (entry: LeaderBoardEntry) => {
+        try {
+            const response = await axios.post(
+                "http://localhost:5034/game/leaderboard",
+                entry,
+            );
+            console.log("Score registered successfully:", response.data);
+        } catch (error) {
+            console.error("Error registering score:", error);
+        }
+    };
+
+    const handleSubmitScore = async () => {
+        if (playerName.trim() === "") return;
+        const entry: LeaderBoardEntry = {
+            playerName,
+            timeInSeconds: elapsedTime,
+        };
+        await registerScore(entry);
+        await fetchLeaderBoard();
+        setHasSubmittedScore(true);
+        handleResetGame();
+    };
+    useEffect(() => {
+        handleSubmitScore();
+    }, [hasSubmittedScore]);
+
     useEffect(() => {
         void fetchBoardData();
     }, []);
@@ -58,6 +115,7 @@ export function Game() {
         setIsWin(false);
         setIsGameOver(false);
         setElapsedTime(0);
+        setHasSubmittedScore(false);
         hasFirstMoveBeenMade.current = false;
         await fetchBoardData();
     };
@@ -204,12 +262,16 @@ export function Game() {
                 isGameOver={isGameOver}
             />
             <Modal
+                playerName={playerName}
                 winOrLose={isWin}
                 isOpen={isWin || isGameOver}
+                onNameChange={handlePlayerNameChange}
+                onSubmitScore={handleSubmitScore}
                 onRestart={() => {
                     void handleResetGame();
                 }}
             />
+            <Leaderboard leaderboard={leaderboard} />
         </div>
     );
 }

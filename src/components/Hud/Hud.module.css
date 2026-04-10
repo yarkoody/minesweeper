@@ -4,6 +4,7 @@
     align-items: center;
     gap: 12px;
     width: min(640px, 100%);
+    box-sizing: border-box;
     margin: 0 auto 12px;
     padding: 10px 14px;
     background: #0f172a;
@@ -14,13 +15,14 @@
 .hudMetric {
     display: inline-flex;
     align-items: center;
-    font-size: 24px;
+    font-size: 18px;
     font-weight: 700;
     color: #e2e8f0;
 }
 
 .hudMetricIcon {
-    margin-right: 8px;
+    margin-right: 6px;
+    transform: scale(0.85);
 }
 
 .hudMetric[data-metric-id="flags"] {

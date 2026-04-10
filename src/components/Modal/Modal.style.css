@@ -29,6 +29,59 @@
     letter-spacing: 0.02em;
 }
 
+.modalForm {
+    width: 100%;
+    display: grid;
+    gap: 0.6rem;
+}
+
+.modalInput {
+    width: 90%;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 0.65rem 0.8rem;
+    background: #0f172a;
+    color: #f8fafc;
+    font-size: 0.95rem;
+}
+
+.modalInput::placeholder {
+    color: #94a3b8;
+}
+
+.modalInput:focus {
+    outline: none;
+    border-color: #22d3ee;
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
+}
+
+.modalSubmitButton {
+    border: none;
+    width: 123.35px;
+    height: 38.7793px;
+    border-radius: 999px;
+    padding: 0.65rem 1rem;
+    background: #22c55e;
+    color: #052e16;
+    font-weight: 700;
+    cursor: pointer;
+    justify-self: center;
+    transition:
+        transform 120ms ease,
+        box-shadow 120ms ease,
+        filter 120ms ease;
+}
+
+.modalSubmitButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
+    filter: brightness(1.03);
+}
+
+.modalSubmitButton:active {
+    transform: translateY(0);
+}
+
 .modalResetButton {
     border: none;
     border-radius: 999px;

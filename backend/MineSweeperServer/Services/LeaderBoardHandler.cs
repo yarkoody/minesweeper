@@ -1,20 +1,35 @@
+using MineSweeperServer.DTOs;
+
 namespace MineSweeperServer.Services;
 
 public class LeaderBoardHandler
 {
-    private readonly List<(string playerName, DateTime time)> _leaderBoard = new();
+    private readonly List<LeaderboardEntry> _leaderBoard = new();
 
-    private void SetScore(string playerName, DateTime time) => _leaderBoard.Add((playerName, time));
+    private void SetScore(string playerName, int time) => _leaderBoard.Add(new LeaderboardEntry(playerName, time));
 
-    public void AddScore(string playerName, DateTime time)
+    public void AddScore(string playerName, int time)
     {
+        ValidateEntry(new LeaderboardEntry(playerName, time));
         SetScore(playerName, time);
     }
 
-    public List<(string playerName, DateTime time)> GetTop10()
+    public List<LeaderboardEntry> GetTop10()
     {
-        var sortedLeaderBoard = _leaderBoard.OrderBy(entry => entry.time).Take(10).ToList();
+        var sortedLeaderBoard = _leaderBoard.OrderBy(entry => entry.TimeInSeconds).Take(10).ToList();
         return sortedLeaderBoard;
+    }
+
+    private void ValidateEntry(LeaderboardEntry entry)
+    {
+        if (string.IsNullOrWhiteSpace(entry.PlayerName))
+        {
+            throw new ArgumentException("Player name cannot be empty.");
+        }
+        if (entry.TimeInSeconds <= 0)
+        {
+            throw new ArgumentException("Time in seconds must be positive.");
+        }
     }
 
 

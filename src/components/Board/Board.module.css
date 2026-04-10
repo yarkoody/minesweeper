@@ -1,7 +1,7 @@
 .board {
     display: grid;
-    grid-template-columns: repeat(9, 120px);
-    gap: 4px;
+    grid-template-columns: repeat(9, 88px);
+    gap: 2px;
     padding: 16px;
     background: #0f172a;
     border: 2px solid #334155;
@@ -19,7 +19,6 @@
     box-shadow:
         0 0 20px rgba(16, 185, 129, 0.5),
         0 4px 6px rgba(0, 0, 0, 0.1);
-    transform: scale(1.02);
     pointer-events: none;
 }
 
