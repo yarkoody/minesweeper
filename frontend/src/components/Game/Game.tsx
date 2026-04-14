@@ -14,20 +14,19 @@ import type { LeaderBoardEntry } from "../../types/LeaderBoardEntry";
 import { Leaderboard } from "../Leaderboard/Leaderboard";
 
 export function Game() {
-    // TODO: Refactor to useReducer for better state management as the game logic grows more complex
-    const [board, setBoard] = useState([] as TileType[][]);
-    const [isWin, setIsWin] = useState(false);
+    const [board, setBoard] = useState<TileType[][]>([] as TileType[][]);
+    const [isWin, setIsWin] = useState<boolean>(false);
 
-    const [isGameOver, setIsGameOver] = useState(false);
-    const [elapsedTime, setElapsedTime] = useState(0);
+    const [isGameOver, setIsGameOver] = useState<boolean>(false);
+    const [elapsedTime, setElapsedTime] = useState<number>(0);
 
-    const [playerName, setPlayerName] = useState("");
-    const [leaderboard, setLeaderboard] = useState(
+    const [playerName, setPlayerName] = useState<string>("");
+    const [leaderboard, setLeaderboard] = useState<LeaderBoardEntry[]>(
         [] as Array<LeaderBoardEntry>,
     );
-    const [hasSubmittedScore, setHasSubmittedScore] = useState(false);
+    const [hasSubmittedScore, setHasSubmittedScore] = useState<boolean>(false);
 
-    const hasFirstMoveBeenMade = useRef(false);
+    const hasFirstMoveBeenMade = useRef<boolean>(false);
     const timerIdRef = useRef<number | null>(null);
 
     const flagsPlaced = board.reduce(
