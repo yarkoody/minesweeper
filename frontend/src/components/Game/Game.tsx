@@ -10,41 +10,44 @@ import { Modal } from "../Modal/Modal";
 
 import { Leaderboard } from "../Leaderboard/Leaderboard";
 import { useBoard } from "../../hooks/useBoard";
-import { useFetchLeaderboard } from "../../hooks/useFetchLeaderboard";
-import { useGameTimer } from "../../hooks/useGameTimer";
+import { useLeaderboard } from "../../hooks/useLeaderboard";
 import { useSubmitScore } from "../../hooks/useSubmitScore";
 
 export function Game() {
-    const { elapsedTime } = useGameTimer();
-    const { leaderboard } = useFetchLeaderboard();
-
-    const { playerName, handlePlayerNameChange, handleSubmitScore, resetSubmissionStatus } =
-        useSubmitScore(elapsedTime);
+    const { leaderboard } = useLeaderboard();
 
     const {
         board,
-        handleReveal,
-        handleResetGame,
-        handleToggleFlag,
-        gameState,
+        reveal,
+        reset,
+        toggleFlag,
+        gameStatus,
         flagsPlaced,
-    } = useBoard(resetSubmissionStatus);
+        elapsedTime,
+    } = useBoard();
+
+    const {
+        playerName,
+        handlePlayerNameChange,
+        handleSubmitScore,
+        resetSubmissionStatus,
+    } = useSubmitScore(elapsedTime);
 
     const hudMetrics: HudMetricType[] = [
         { id: "flags", icon: <Flag />, value: flagsPlaced },
         { id: "time", icon: <Clock />, value: formatTime(elapsedTime) },
     ];
 
-    const isWin = gameState.status === "won";
-    const isGameOver = gameState.status !== "playing";
+    const isWin = gameStatus === "won";
+    const isGameOver = gameStatus !== "playing";
     return (
         <div className={styles.gameShell}>
             <div className={styles.gameHeader}>
                 <h1 className={styles.gameTitle}>MineSweeper</h1>
                 <p className={styles.gameStatus}>
-                    {gameState.status === "won"
+                    {gameStatus === "won"
                         ? "You win!"
-                        : gameState.status === "lost"
+                        : gameStatus === "lost"
                           ? "Game Over"
                           : ""}
                 </p>
@@ -52,8 +55,8 @@ export function Game() {
             <Hud metrics={hudMetrics} />
             <Board
                 tiles={board}
-                handleReveal={handleReveal}
-                handleToggleFlag={handleToggleFlag}
+                handleReveal={reveal}
+                handleToggleFlag={toggleFlag}
                 isWin={isWin}
                 isGameOver={isGameOver}
             />
@@ -64,7 +67,8 @@ export function Game() {
                 onNameChange={handlePlayerNameChange}
                 onSubmitScore={handleSubmitScore}
                 onRestart={() => {
-                    void handleResetGame();
+                    resetSubmissionStatus();
+                    void reset();
                 }}
             />
             <Leaderboard leaderboard={leaderboard} />

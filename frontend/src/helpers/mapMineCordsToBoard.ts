@@ -5,7 +5,7 @@ interface MineCoords {
     col: number;
 }
 
-interface BoardLayout {
+export interface BoardLayout {
     rows: number;
     cols: number;
     minePositions: MineCoords[];
